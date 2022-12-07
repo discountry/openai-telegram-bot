@@ -154,7 +154,7 @@ bot.command("fix", async (ctx) => {
 });
 
 bot.command("reload", async (ctx) => {
-  chat_log = {};
+  chat_log.clear();
 
   ctx.sendChatAction("typing");
 
