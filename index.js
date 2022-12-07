@@ -158,7 +158,7 @@ bot.command("reload", async (ctx) => {
 
   ctx.sendChatAction("typing");
 
-  if (chat_log === "") {
+  if (chat_log.size === 0) {
     return ctx.reply("Conversation history reloaded!", {
       reply_to_message_id: ctx.message.message_id,
     });
