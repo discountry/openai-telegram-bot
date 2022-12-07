@@ -23,3 +23,37 @@ npm install -g pm2
 
 pm2 start index.js
 ```
+
+# Interactions
+
+**/ask**
+
+ask normal questions or let the bot write code for you.
+
+```
+/ask how old are you
+```
+
+**/fix**
+
+get grammer and typo fix.
+
+```
+/fix he am dgo
+```
+
+**/image**
+
+get image reply from dalle2 model.
+
+```
+/image doge with twitter to the moon
+```
+
+**/reload**
+
+reload chat history. The bot will forget everything.
+
+```
+/reload
+```
