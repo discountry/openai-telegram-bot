@@ -1,0 +1,29 @@
+{
+  "name": "openai-telegram-bot",
+  "version": "1.0.0",
+  "description": "openai telegram bot for private messages & groups",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/discountry/openai-telegram-bot.git"
+  },
+  "keywords": [
+    "openai",
+    "telegram"
+  ],
+  "author": "discountry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/discountry/openai-telegram-bot/issues"
+  },
+  "homepage": "https://github.com/discountry/openai-telegram-bot#readme",
+  "dependencies": {
+    "marked": "^4.2.3",
+    "nodemon": "^2.0.20",
+    "openai": "^3.1.0",
+    "telegraf": "^4.11.2"
+  }
+}
