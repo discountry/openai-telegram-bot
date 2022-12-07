@@ -6,7 +6,11 @@ const config = require("./config");
 const start_sequence = "\nAI:";
 const restart_sequence = "\nHuman:";
 
-let chat_log = {};
+const chat_log = new Map();
+
+let start = Date.now();
+
+console.log("starting:", start);
 
 const openai = new OpenAIApi(
   new Configuration({
@@ -15,6 +19,17 @@ const openai = new OpenAIApi(
 );
 const bot = new Telegraf(config.token);
 
+function clearMap() {
+  const millis = Date.now() - start;
+  if (Math.floor(millis / 1000) > 60 * 5) {
+    chat_log.clear();
+
+    start = Date.now();
+
+    console.log("chat log reloaded!");
+  }
+}
+
 bot.start((ctx) => {
   ctx.reply(
     "Hello, this is a bot that uses OpenAI.\nAsk anything using /ask followed by your question, if your directly texting the bot you don't need to use /ask, just ask your question."
@@ -22,12 +37,14 @@ bot.start((ctx) => {
 });
 
 async function askAI(question, userId) {
-  const userLog = chat_log.hasOwnProperty(userId) ? chat_log[userId] : "";
+  const userLog = chat_log.get(userId) ? chat_log.get(userId) : "";
+
+  const promption = `${userLog}${restart_sequence}${question}${start_sequence}`;
 
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
-    prompt: `${userLog}${restart_sequence}${question}${start_sequence}`,
-    max_tokens: 1000,
+    prompt: promption,
+    max_tokens: 2500,
     temperature: 0.7,
     stop: [" Human:", " AI:"],
   });
@@ -35,7 +52,8 @@ async function askAI(question, userId) {
   const answer = completion.data.choices[0].text;
 
   if (answer) {
-    chat_log[userId] = `${chat_log[userId]}${restart_sequence}${question}${start_sequence}${answer}`;
+    clearMap();
+    chat_log.set(userId, `${promption}${answer}`);
   }
 
   return answer;
@@ -66,7 +84,7 @@ bot.command("ask", async (ctx) => {
     });
   }
 
-  ctx.replyWithChatAction("typing");
+  ctx.sendChatAction("typing");
 
   const completion = await askAI(question, userId);
 
@@ -91,7 +109,7 @@ bot.command("image", async (ctx) => {
     });
   }
 
-  ctx.replyWithChatAction("typing");
+  ctx.sendChatAction("typing");
 
   const response = await generateImage(question);
 
@@ -101,7 +119,7 @@ bot.command("image", async (ctx) => {
 bot.command("reload", async (ctx) => {
   chat_log = {};
 
-  ctx.replyWithChatAction("typing");
+  ctx.sendChatAction("typing");
 
   if (chat_log === "") {
     return ctx.reply("Conversation history reloaded!", {
