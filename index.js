@@ -67,6 +67,18 @@ async function generateImage(prompt) {
   });
 }
 
+async function editRequest(prompt) {
+  const response = await openai.createEdit({
+    model: "text-davinci-edit-001",
+    input: prompt,
+    instruction: "Fix the spelling and grammer mistakes",
+  });
+
+  const fix = response.data.choices[0].text;
+
+  return fix;
+}
+
 bot.command("ask", async (ctx) => {
   const userId = ctx.update.message.from.id;
 
@@ -114,6 +126,31 @@ bot.command("image", async (ctx) => {
   const response = await generateImage(question);
 
   ctx.replyWithPhoto(response.data.data[0].url, question);
+});
+
+bot.command("fix", async (ctx) => {
+  if (ctx.update.message.from.is_bot) {
+    return false;
+  }
+
+  const args = ctx.update.message.text.split(" ");
+  args.shift();
+  let question = args.join(" ");
+
+  if (question.length == 0) {
+    return ctx.reply("Type something after /fix to correct your text.", {
+      reply_to_message_id: ctx.message.message_id,
+    });
+  }
+
+  ctx.sendChatAction("typing");
+
+  const completion = await editRequest(question);
+
+  ctx.reply(marked.parseInline(completion), {
+    reply_to_message_id: ctx.message.message_id,
+    parse_mode: "HTML",
+  });
 });
 
 bot.command("reload", async (ctx) => {
