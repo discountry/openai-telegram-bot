@@ -153,8 +153,6 @@ bot.command("fix", async (ctx) => {
 
   ctx.sendChatAction("typing");
 
-  let completion = "";
-
   try {
     const completion = await editRequest(question);
 
