@@ -1,7 +1,7 @@
-const { Telegraf } = require("telegraf");
-const { Configuration, OpenAIApi } = require("openai");
-const { marked } = require("marked");
-const config = require("./config");
+import { marked } from "marked";
+import { Configuration, OpenAIApi } from "openai";
+import { Telegraf } from "telegraf";
+import config from "./config.js";
 
 const start_sequence = "\nAI:";
 const restart_sequence = "\nHuman:";
