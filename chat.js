@@ -34,7 +34,7 @@ bot.start((ctx) => {
 
 async function askAI(question, userId) {
   // ensure the API is properly authenticated
-  await chatgpt.ensureAuth()
+  await chatgpt.ensureAuth();
 
   const conversation = chat_log.get(userId) ? chat_log.get(userId) : chatgpt.getConversation();
 
