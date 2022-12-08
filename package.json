@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/discountry/openai-telegram-bot#readme",
   "dependencies": {
+    "chatgpt": "^2.0.4",
     "marked": "^4.2.3",
     "nodemon": "^2.0.20",
     "openai": "^3.1.0",
