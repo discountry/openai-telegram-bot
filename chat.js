@@ -1,7 +1,7 @@
-const { Telegraf } = require("telegraf");
-const { ChatGPTAPI } = require("chatgpt");
-const { marked } = require("marked");
-const config = require("./config");
+import { ChatGPTAPI } from "chatgpt";
+import { marked } from "marked";
+import { Telegraf } from "telegraf";
+import config from "./config.js";
 
 const chat_log = new Map();
 
@@ -10,8 +10,8 @@ let start = Date.now();
 console.log("starting:", start);
 
 const chatgpt = new ChatGPTAPI({
-  sessionToken: config.session
-})
+  sessionToken: config.session,
+});
 
 const bot = new Telegraf(config.token);
 
@@ -36,7 +36,9 @@ async function askAI(question, userId) {
   // ensure the API is properly authenticated
   await chatgpt.ensureAuth();
 
-  const conversation = chat_log.get(userId) ? chat_log.get(userId) : chatgpt.getConversation();
+  const conversation = chat_log.get(userId)
+    ? chat_log.get(userId)
+    : chatgpt.getConversation();
 
   const answer = await conversation.sendMessage(question);
 
