@@ -1,7 +1,9 @@
+import dotenv from "dotenv";
 import { marked } from "marked";
 import { Configuration, OpenAIApi } from "openai";
 import { Telegraf } from "telegraf";
-import config from "./config.js";
+
+dotenv.config();
 
 const start_sequence = "\nAI:";
 const restart_sequence = "\nHuman:";
@@ -14,10 +16,10 @@ console.log("starting:", start);
 
 const openai = new OpenAIApi(
   new Configuration({
-    apiKey: config.apiKey,
+    apiKey: process.env.APIKEY,
   })
 );
-const bot = new Telegraf(config.token);
+const bot = new Telegraf(process.env.TOKEN);
 
 function clearMap() {
   const millis = Date.now() - start;

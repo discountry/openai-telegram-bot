@@ -1,7 +1,9 @@
 import { ChatGPTAPI } from "chatgpt";
+import dotenv from "dotenv";
 import { marked } from "marked";
 import { Telegraf } from "telegraf";
-import config from "./config.js";
+
+dotenv.config();
 
 const chat_log = new Map();
 
@@ -10,10 +12,10 @@ let start = Date.now();
 console.log("starting:", start);
 
 const chatgpt = new ChatGPTAPI({
-  sessionToken: config.session,
+  sessionToken: process.env.SESSION,
 });
 
-const bot = new Telegraf(config.token);
+const bot = new Telegraf(process.env.TOKEN);
 
 function clearMap() {
   const millis = Date.now() - start;
