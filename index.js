@@ -98,12 +98,16 @@ bot.command("ask", async (ctx) => {
 
   ctx.sendChatAction("typing");
 
-  const completion = await askAI(question, userId);
+  try {
+    const completion = await askAI(question, userId);
 
-  ctx.reply(marked.parseInline(completion), {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: "HTML",
-  });
+    ctx.reply(marked.parseInline(completion), {
+      reply_to_message_id: ctx.message.message_id,
+      parse_mode: "HTML",
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 bot.command("image", async (ctx) => {
@@ -123,9 +127,13 @@ bot.command("image", async (ctx) => {
 
   ctx.sendChatAction("typing");
 
-  const response = await generateImage(question);
+  try {
+    const response = await generateImage(question);
 
-  ctx.replyWithPhoto(response.data.data[0].url, question);
+    ctx.replyWithPhoto(response.data.data[0].url, question);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 bot.command("fix", async (ctx) => {
@@ -145,12 +153,18 @@ bot.command("fix", async (ctx) => {
 
   ctx.sendChatAction("typing");
 
-  const completion = await editRequest(question);
+  let completion = "";
 
-  ctx.reply(marked.parseInline(completion), {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: "HTML",
-  });
+  try {
+    const completion = await editRequest(question);
+
+    ctx.reply(marked.parseInline(completion), {
+      reply_to_message_id: ctx.message.message_id,
+      parse_mode: "HTML",
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 bot.command("reload", async (ctx) => {
