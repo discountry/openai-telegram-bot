@@ -18,10 +18,10 @@ cd openai-telegram-bot
 
 npm i
 
-cp example.config.js config.js
+cp .env.example .env
 
-# edit config.js with your token and api key
-vim config.js
+# edit .env with your token and api key
+vim .env
 
 # test
 node index.js
