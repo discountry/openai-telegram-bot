@@ -1,10 +1,7 @@
 const { Telegraf } = require("telegraf");
-const { Configuration, OpenAIApi } = require("openai");
+const { ChatGPTAPI } = require("chatgpt");
 const { marked } = require("marked");
 const config = require("./config");
-
-const start_sequence = "\nAI:";
-const restart_sequence = "\nHuman:";
 
 const chat_log = new Map();
 
@@ -12,11 +9,10 @@ let start = Date.now();
 
 console.log("starting:", start);
 
-const openai = new OpenAIApi(
-  new Configuration({
-    apiKey: config.apiKey,
-  })
-);
+const chatgpt = new ChatGPTAPI({
+  sessionToken: config.session
+})
+
 const bot = new Telegraf(config.token);
 
 function clearMap() {
@@ -37,46 +33,19 @@ bot.start((ctx) => {
 });
 
 async function askAI(question, userId) {
-  const userLog = chat_log.get(userId) ? chat_log.get(userId) : "";
+  // ensure the API is properly authenticated
+  await chatgpt.ensureAuth()
 
-  const promption = `${userLog}${restart_sequence}${question}${start_sequence}`;
+  const conversation = chat_log.get(userId) ? chat_log.get(userId) : chatgpt.getConversation();
 
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: promption,
-    max_tokens: 2500,
-    temperature: 0.7,
-    stop: [" Human:", " AI:"],
-  });
-
-  const answer = completion.data.choices[0].text;
+  const answer = await conversation.sendMessage(question);
 
   if (answer) {
     clearMap();
-    chat_log.set(userId, `${promption}${answer}`);
+    chat_log.set(userId, conversation);
   }
 
   return answer;
-}
-
-async function generateImage(prompt) {
-  return await openai.createImage({
-    prompt: prompt,
-    n: 1,
-    size: "1024x1024",
-  });
-}
-
-async function editRequest(prompt) {
-  const response = await openai.createEdit({
-    model: "text-davinci-edit-001",
-    input: prompt,
-    instruction: "Fix the spelling and grammer mistakes",
-  });
-
-  const fix = response.data.choices[0].text;
-
-  return fix;
 }
 
 bot.command("ask", async (ctx) => {
@@ -100,61 +69,6 @@ bot.command("ask", async (ctx) => {
 
   try {
     const completion = await askAI(question, userId);
-
-    ctx.reply(marked.parseInline(completion), {
-      reply_to_message_id: ctx.message.message_id,
-      parse_mode: "HTML",
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-bot.command("image", async (ctx) => {
-  if (ctx.update.message.from.is_bot) {
-    return false;
-  }
-
-  const args = ctx.update.message.text.split(" ");
-  args.shift();
-  let question = args.join(" ");
-
-  if (question.length == 0) {
-    return ctx.reply("Type something after /image to get a pic.", {
-      reply_to_message_id: ctx.message.message_id,
-    });
-  }
-
-  ctx.sendChatAction("typing");
-
-  try {
-    const response = await generateImage(question);
-
-    ctx.replyWithPhoto(response.data.data[0].url, question);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-bot.command("fix", async (ctx) => {
-  if (ctx.update.message.from.is_bot) {
-    return false;
-  }
-
-  const args = ctx.update.message.text.split(" ");
-  args.shift();
-  let question = args.join(" ");
-
-  if (question.length == 0) {
-    return ctx.reply("Type something after /fix to correct your text.", {
-      reply_to_message_id: ctx.message.message_id,
-    });
-  }
-
-  ctx.sendChatAction("typing");
-
-  try {
-    const completion = await editRequest(question);
 
     ctx.reply(marked.parseInline(completion), {
       reply_to_message_id: ctx.message.message_id,
