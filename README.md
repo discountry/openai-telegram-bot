@@ -2,6 +2,14 @@
 
 openai telegram bot for private messages &amp; groups
 
+## Notice
+
+The bot using two kinds of APIs from OpenAPI official & chatGPT web api.
+
+`index.js` for OpenAPI official api —— reliable but expensive.
+
+`chat.js` for chatGPT web api —— free but slow & can get to network issues.
+
 ## Usage
 
 ```bash
@@ -22,6 +30,13 @@ node index.js
 npm install -g pm2
 
 pm2 start index.js
+```
+
+`chat.js`
+
+```bash
+# test
+node chat.js
 
 # use chatgpt api when you run out of money
 pm2 start chat.js
