@@ -22,6 +22,9 @@ node index.js
 npm install -g pm2
 
 pm2 start index.js
+
+# use chatgpt api when you run out of money
+pm2 start chat.js
 ```
 
 # Interactions
