@@ -10,6 +10,8 @@ The bot using two kinds of APIs from OpenAPI official & chatGPT web api.
 
 `chat.js` for chatGPT web api —— free but slow & can get to network issues.
 
+`server.js` turn chatGPT into your own api service.
+
 ## Usage
 
 ```bash
@@ -40,6 +42,18 @@ node chat.js
 
 # use chatgpt api when you run out of money
 pm2 start chat.js
+```
+
+`server.js`
+
+```bash
+# test
+node server.js
+
+# use chatgpt api as a web service that you can access from url
+pm2 start server.js
+
+# goto http://localhost/chat/:userId/:message example: http://localhost/chat/1/hello
 ```
 
 # Interactions
