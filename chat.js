@@ -1,4 +1,4 @@
-import { ChatGPTAPI } from "chatgpt";
+import { ChatGPTAPI, getOpenAIAuth } from "chatgpt";
 import dotenv from "dotenv";
 import { marked } from "marked";
 import { Telegraf } from "telegraf";
@@ -11,9 +11,12 @@ let start = Date.now();
 
 console.log("starting:", start);
 
-const chatgpt = new ChatGPTAPI({
-  sessionToken: process.env.SESSION,
+const openAIAuth = await getOpenAIAuth({
+  email: process.env.OPENAI_EMAIL,
+  password: process.env.OPENAI_PASSWORD,
 });
+
+const chatgpt = new ChatGPTAPI({ ...openAIAuth });
 
 const bot = new Telegraf(process.env.TOKEN);
 
