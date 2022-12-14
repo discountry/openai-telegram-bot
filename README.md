@@ -2,6 +2,15 @@
 
 openai telegram bot for private messages &amp; groups
 
+## Update 2022/12/14
+
+Only one version works for now, and you need to run it on a computer that could open Chrome.
+
+```bash
+# run this command and wait for the browser window.
+node chat.js
+```
+
 ## Notice
 
 The bot using two kinds of APIs from OpenAPI official & chatGPT web api.
