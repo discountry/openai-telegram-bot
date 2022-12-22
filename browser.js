@@ -1,24 +1,35 @@
-import { ChatGPTAPIBrowser } from "chatgpt";
+import { ChatGPTAPI, getOpenAIAuth } from "chatgpt";
 import dotenv from "dotenv";
 import { marked } from "marked";
 import { Telegraf } from "telegraf";
 
 dotenv.config();
 
-let conversation = null;
+const chat_log = new Map();
 
 let start = Date.now();
 
 console.log("starting:", start);
 
-const api = new ChatGPTAPIBrowser({
+const openAIAuth = await getOpenAIAuth({
   email: process.env.OPENAI_EMAIL,
   password: process.env.OPENAI_PASSWORD,
 });
 
-await api.initSession();
+const chatgpt = new ChatGPTAPI({ ...openAIAuth });
 
 const bot = new Telegraf(process.env.TOKEN);
+
+function clearMap() {
+  const millis = Date.now() - start;
+  if (Math.floor(millis / 1000) > 60 * 5) {
+    chat_log.clear();
+
+    start = Date.now();
+
+    console.log("chat log reloaded!");
+  }
+}
 
 bot.start((ctx) => {
   ctx.reply(
@@ -27,16 +38,21 @@ bot.start((ctx) => {
 });
 
 async function askAI(question, userId) {
-  conversation = conversation
-    ? await api.sendMessage(question, {
-        conversationId: conversation.conversationId,
-        parentMessageId: conversation.messageId,
-      })
-    : await api.sendMessage(question);
+  // ensure the API is properly authenticated
+  await chatgpt.ensureAuth();
 
-  console.log(conversation.response);
+  const conversation = chat_log.get(userId)
+    ? chat_log.get(userId)
+    : chatgpt.getConversation();
 
-  return conversation.response;
+  const answer = await conversation.sendMessage(question);
+
+  if (answer) {
+    clearMap();
+    chat_log.set(userId, conversation);
+  }
+
+  return answer;
 }
 
 bot.command("ask", async (ctx) => {
