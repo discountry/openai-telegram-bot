@@ -1,4 +1,4 @@
-import { ChatGPTAPIBrowser } from "chatgpt";
+import { ChatGPTAPI } from "chatgpt";
 import dotenv from "dotenv";
 import { marked } from "marked";
 import { Telegraf } from "telegraf";
@@ -11,12 +11,9 @@ let start = Date.now();
 
 console.log("starting:", start);
 
-const api = new ChatGPTAPIBrowser({
-  email: process.env.OPENAI_EMAIL,
-  password: process.env.OPENAI_PASSWORD,
+const api = new ChatGPTAPI({
+  apiKey: process.env.APIKEY,
 });
-
-await api.initSession();
 
 const bot = new Telegraf(process.env.TOKEN);
 
@@ -34,9 +31,9 @@ async function askAI(question, userId) {
       })
     : await api.sendMessage(question);
 
-  console.log(conversation.response);
+  console.log(conversation.text);
 
-  return conversation.response;
+  return conversation.text;
 }
 
 bot.command("ask", async (ctx) => {
