@@ -1,4 +1,4 @@
-import { ChatGPTAPI } from "chatgpt";
+import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
 import express from "express";
 
@@ -24,31 +24,32 @@ function clearMap() {
   }
 }
 
-// sessionToken is required; see below for details
-const chatgpt = new ChatGPTAPI({
-  apiKey: process.env.APIKEY,
-});
+const openai = new OpenAIApi(
+  new Configuration({
+    apiKey: process.env.APIKEY,
+  })
+);
 
 async function askAI(question, userId) {
-  console.log(userId, question);
+  const userLog = chat_log.get(userId) ? chat_log.get(userId) : "";
 
-  console.log(chat_log);
+  const promptionList = [...userLog, { role: "user", content: question }];
 
-  const conversation = chat_log.get(userId)
-    ? await chatgpt.sendMessage(question, {
-      conversationId: chat_log.get(userId).conversationId,
-      parentMessageId: chat_log.get(userId).messageId,
-    })
-    : await chatgpt.sendMessage(question);
+  const completion = await openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: promptionList,
+  });
 
-  const answer = conversation.text;
+  const answer = completion.data.choices[0].message;
+
+  // console.log(answer);
 
   if (answer) {
     clearMap();
-    chat_log.set(userId, conversation);
+    chat_log.set(userId, [...promptionList, answer]);
   }
 
-  return answer;
+  return answer.content;
 }
 
 app.get("/", (req, res) => {
