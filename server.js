@@ -5,7 +5,7 @@ import express from "express";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT ? process.env.PORT : 80;
+const port = process.env.PORT ? process.env.PORT : 8080;
 
 const chat_log = new Map();
 
@@ -26,22 +26,22 @@ function clearMap() {
 
 // sessionToken is required; see below for details
 const chatgpt = new ChatGPTAPI({
-  sessionToken: process.env.SESSION_TOKEN,
+  apiKey: process.env.APIKEY,
 });
 
 async function askAI(question, userId) {
-  // ensure the API is properly authenticated
-  await chatgpt.ensureAuth();
-
   console.log(userId, question);
 
   console.log(chat_log);
 
   const conversation = chat_log.get(userId)
-    ? chat_log.get(userId)
-    : chatgpt.getConversation();
+    ? await chatgpt.sendMessage(question, {
+      conversationId: chat_log.get(userId).conversationId,
+      parentMessageId: chat_log.get(userId).messageId,
+    })
+    : await chatgpt.sendMessage(question);
 
-  const answer = await conversation.sendMessage(question);
+  const answer = conversation.text;
 
   if (answer) {
     clearMap();
