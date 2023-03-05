@@ -36,7 +36,7 @@ bot.start((ctx) => {
 });
 
 async function askAI(question, userId) {
-  const userLog = chat_log.get(userId) ? chat_log.get(userId) : "";
+  const userLog = chat_log.get(userId) ? chat_log.get(userId) : [];
 
   const promptionList = [...userLog, { role: "user", content: question }];
 
