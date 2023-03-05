@@ -17,6 +17,10 @@ node turbo.js
 
 The bot using two kinds of APIs from OpenAPI official & chatGPT web api.
 
+`liveChat.js` for simulating the chatgpt website live reply in telegram.
+
+`turbo.js` for newest `gpt-3.5` official chatgpt API.
+
 `index.js` for OpenAPI official api —— reliable but expensive.
 
 `chat.js` for chatGPT web api —— free but slow & can get to network issues.
