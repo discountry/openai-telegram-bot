@@ -21,9 +21,9 @@ The bot using two kinds of APIs from OpenAPI official & chatGPT web api.
 
 `turbo.js` for newest `gpt-3.5` official chatgpt API.
 
-`index.js` for OpenAPI official api —— reliable but expensive.
+`index.js` for OpenAPI official api using `text-davinci-003` model —— reliable but expensive.
 
-`chat.js` for chatGPT web api —— free but slow & can get to network issues.
+`chat.js` for reverse engineered chatGPT web api —— free but slow & may get to network issues.
 
 `server.js` turn chatGPT into your own api service.
 
