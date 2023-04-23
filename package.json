@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node chat.js",
-    "serve": "node server.js"
+    "test": "node chat.js",
+    "start": "pm2 start liveChat.js --cron-restart='0 * * * *'",
+    "server": "pm2 start reverse.js --cron-restart='0 * * * *'"
   },
   "repository": {
     "type": "git",
